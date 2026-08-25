@@ -276,16 +276,18 @@ chapter: "第二課：形容詞";
   desc: "美麗的；漂亮的";
   example: "Das ist ein sehr schönes Bild.";
 }`,hH=`請你學習以下這個德語單字卡片格式,之後我給你德語課本照片或單字時,請你用繁體中文按這個格式整理回覆給我。
+desc 用繁體中文；欄位沒內容就整行省略，不要留空字串。
+word 的單字本體（不含冠詞與空格）超過 12 個字母時，在音節或詞素邊界插入 | 切開，每段不超過 12 個字母。
+課本有分課次或主題時，在該組單字前面單獨寫一行 chapter；同一課共用一行，不要每個單字都寫。
 
-每個單字用 { } 包起來：
+範例：
+chapter: "第一課";
 {
-  word: "der Tisch";
-  pos: "n., m.";
-  forms: "Pl. Tische";
-  desc: "桌子";
-  example: "Der Tisch steht in der Küche.";
+  word: "die Passions|frucht";
+  pos: "n., f.";
+  forms: "Pl. Passionsfrüchte";
+  desc: "百香果";
 }
-
 {
   word: "gehen";
   pos: "v., unr.";
@@ -294,21 +296,13 @@ chapter: "第二課：形容詞";
   example: "Wir gehen heute Abend ins Kino.";
   note: "完成式用 sein";
 }
-
-如果課本內容有分課次或主題,請在該組單字前面加一行 chapter: "章節名稱"; （不用 { } 包住,單獨一行）,例如：
-chapter: "第一課：打招呼";
-
+chapter: "第二課";
 {
-  word: "hallo";
-  pos: "interj.";
-  desc: "你好";
-}
-
-如果 word 欄位裡的單字本身(不含冠詞和空格)超過 12 個字母,請在合適的音節或詞素邊界插入 | 符號,把它切成每一段都不超過 12 個字母,例如：
-{
-  word: "die Passions|frucht";
-  pos: "n., f.";
-  desc: "百香果";
+  word: "schön";
+  pos: "adj.";
+  forms: "schöner, am schönsten";
+  desc: "美麗的；漂亮的";
+  example: "Das ist ein sehr schönes Bild.";
 }
 `;function dH(n,A,e,t){const a=[];let s=[],u=[],l=0;return n.forEach((c,h)=>{const d=A[h],m=s.length===0?d:l+t+d;if(s.length>0&&m>e)if(s.length>1&&s[s.length-1].kind==="chapter"){const y=s.pop(),p=u.pop();a.push(s),s=[y,c],u=[p,d],l=p+t+d}else a.push(s),s=[c],u=[d],l=d;else s.push(c),u.push(d),l=m}),s.length>0&&a.push(s),a}function gH(n){const A=zn.useRef(null),[e,t]=zn.useState(()=>n.length?[n]:[]),[a,s]=zn.useState([]);return zn.useLayoutEffect(()=>{if(n.length===0){t([]),s([]);return}const u=A.current;if(!u)return;const l=u.querySelector(".page__cards");if(!l)return;const c=l.children;if(c.length!==n.length)return;const h=parseFloat(getComputedStyle(l).rowGap)||0,d=l.clientHeight,m=Array.from(c,y=>y.getBoundingClientRect().height);t(dH(n,m,d,h)),s(n.filter((y,p)=>m[p]>d))},[n]),{pages:e,measurePageRef:A,overflowItems:a}}const pH=96/25.4,vH=210*pH;function BH(){const n=zn.useRef(null),[A,e]=zn.useState(1);return zn.useLayoutEffect(()=>{const t=n.current;if(!t)return;const a=()=>{const s=getComputedStyle(t),u=parseFloat(s.paddingLeft)+parseFloat(s.paddingRight),l=t.clientWidth-u;e(Math.min(1,l/vH))};return a(),window.addEventListener("resize",a),()=>window.removeEventListener("resize",a)},[]),{containerRef:n,scale:A}}const nC='"(?:\\\\.|[^"\\\\])*"',mH=new RegExp(`\\{((?:${nC}|[^{}])*)\\}|chapter\\s*:\\s*(${nC})\\s*;?`,"g"),wH=/(\w+)\s*:\s*"((?:\\.|[^"\\])*)"\s*;?/g;function yH(n){return n.replace(/[\u201C\u201D]/g,'"').replace(/[\u2018\u2019]/g,"'")}function AQ(n){return n.replace(/\\"/g,'"').replace(/\\n/g,`
 `)}function bH(n){return AQ(n.slice(1,-1))}function CH(n){const A={};for(const e of n.matchAll(wH))A[e[1]]=AQ(e[2]);return A.word?{word:A.word.replace(/\|/g,"­"),pos:A.pos,forms:A.forms,desc:A.desc,example:A.example,note:A.note}:null}function EH(n){const A=yH(n),e=[],t=[];for(const a of A.matchAll(mH)){const[,s,u]=a;if(s!==void 0){const l=CH(s);l?e.push({kind:"card",card:l}):t.push(s.trim())}else u!==void 0&&e.push({kind:"chapter",title:bH(u)})}return{items:e,errors:t}}function UH(n){return n.kind==="chapter"?n.title:n.card.word}const SH=300/96,QH=.9;function FH(){const[n,A]=zn.useState(fH),[e,t]=zn.useState(!1),[a,s]=zn.useState(!1),[u,l]=zn.useState(!1),c=zn.useRef(null),h=zn.useRef(null),{items:d,errors:m}=zn.useMemo(()=>EH(n),[n]),y=zn.useMemo(()=>d.filter(T=>T.kind==="card").length,[d]),{pages:p,measurePageRef:E,overflowItems:U}=gH(d),{containerRef:_,scale:S}=BH();zn.useEffect(()=>{if(!a)return;const T=W=>{c.current&&!c.current.contains(W.target)&&s(!1)};return document.addEventListener("mousedown",T),()=>document.removeEventListener("mousedown",T)},[a]);const L=async()=>{try{await navigator.clipboard.writeText(hH),t(!0),setTimeout(()=>t(!1),1500)}catch{}},O=async()=>{const T=h.current;if(!(!T||p.length===0)){l(!0);try{const W=T.querySelectorAll(".page"),eA=new Ne({unit:"mm",format:"a4",orientation:"portrait"});for(let J=0;J<W.length;J++){const z=await aS(W[J],{scale:SH,backgroundColor:"#ffffff"}),M=z.height/z.width*210;J>0&&eA.addPage(),eA.addImage(z.toDataURL("image/jpeg",QH),"JPEG",0,0,210,M)}eA.save("learncard.pdf")}catch{}finally{l(!1)}}};return Le.jsxs(Le.Fragment,{children:[Le.jsxs("div",{className:"editor no-print",children:[Le.jsxs("div",{className:"editor__header",children:[Le.jsx("h1",{className:"editor__title",children:"LearnCard"}),Le.jsxs("div",{className:"editor__actions",children:[Le.jsx("button",{type:"button",className:"editor__btn editor__btn--secondary",onClick:L,children:e?"已複製":"複製 Prompt"}),Le.jsxs("div",{className:"editor__split-btn",children:[Le.jsx("button",{type:"button",className:"editor__split-btn__half",onClick:()=>window.print(),children:"列印"}),Le.jsx("button",{type:"button",className:"editor__split-btn__half",onClick:O,disabled:u||p.length===0,children:u?"…":"下載"})]})]})]}),Le.jsxs("div",{className:"editor__label-row",children:[Le.jsx("label",{className:"editor__label",htmlFor:"card-input",children:"貼上卡片資料"}),Le.jsxs("div",{className:"editor__info",ref:c,children:[Le.jsx("button",{type:"button",className:"editor__info-btn","aria-label":"格式說明","aria-expanded":a,onClick:()=>s(T=>!T),children:"i"}),a&&Le.jsxs("div",{className:"editor__info-popover",children:["格式：",Le.jsx("code",{children:'{ word: ""; pos: ""; forms: ""; desc: ""; example: ""; note: ""; }'})," · ","pos、forms、note 可留空"," · ","分章：",Le.jsx("code",{children:'chapter: "";'})," · ","長單字用 ",Le.jsx("code",{children:"|"}),' 標斷點（如 "Passions|frucht"）']})]})]}),Le.jsx("textarea",{id:"card-input",className:"editor__input",value:n,onChange:T=>A(T.target.value),spellCheck:!1}),Le.jsxs("p",{className:"editor__stats",children:["已解析 ",y," 張 · ",p.length," 頁 A4"]}),m.length>0&&Le.jsxs("div",{className:"editor__warning no-print",children:[Le.jsxs("strong",{children:["⚠ ",m.length," 個區塊解析失敗"]}),"（缺少 word 欄位，請檢查引號/欄位名稱）：",Le.jsx("ul",{children:m.map((T,W)=>Le.jsx("li",{children:Le.jsx("code",{children:T.length>60?`${T.slice(0,60)}…`:T})},W))})]}),U.length>0&&Le.jsxs("div",{className:"editor__warning no-print",children:[Le.jsx("strong",{children:"⚠ 以下內容過長，可能超出單頁高度而被裁切："}),U.map((T,W)=>Le.jsx("code",{children:UH(T)},W))," ","建議縮短例句或備註。"]})]}),d.length>0&&Le.jsx("div",{className:"measure no-print","aria-hidden":"true",children:Le.jsx("section",{ref:E,className:"page page--measure",children:Le.jsx("div",{className:"page__cards",children:d.map((T,W)=>T.kind==="chapter"?Le.jsx($S,{title:T.title},`m-${W}`):Le.jsx(ZS,{data:T.card},`m-${W}-${T.card.word}`))})})}),p.length>0&&Le.jsx("div",{className:"export-pages no-print","aria-hidden":"true",ref:h,children:p.map((T,W)=>Le.jsx(rC,{items:T,pageNumber:W+1},W))}),Le.jsx("main",{className:"pages",ref:_,style:{"--page-scale":S},children:p.length===0?Le.jsx("p",{className:"pages__empty no-print",children:"請在上方貼上至少一組含 word 的資料"}):p.map((T,W)=>Le.jsx(rC,{items:T,pageNumber:W+1},W))})]})}zx.createRoot(document.getElementById("root")).render(Le.jsx(zn.StrictMode,{children:Le.jsx(FH,{})}));/*! @license DOMPurify 3.4.14 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/3.4.14/LICENSE */function iC(n,A){(A==null||A>n.length)&&(A=n.length);for(var e=0,t=Array(A);e<A;e++)t[e]=n[e];return t}function xH(n){if(Array.isArray(n))return n}function _H(n,A){var e=n==null?null:typeof Symbol<"u"&&n[Symbol.iterator]||n["@@iterator"];if(e!=null){var t,a,s,u,l=[],c=!0,h=!1;try{if(s=(e=e.call(n)).next,A!==0)for(;!(c=(t=s.call(e)).done)&&(l.push(t.value),l.length!==A);c=!0);}catch(d){h=!0,a=d}finally{try{if(!c&&e.return!=null&&(u=e.return(),Object(u)!==u))return}finally{if(h)throw a}}return l}}function TH(){throw new TypeError(`Invalid attempt to destructure non-iterable instance.
